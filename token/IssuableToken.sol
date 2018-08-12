@@ -29,7 +29,7 @@ contract IssuableToken is Ownable, SupplyLimited, ERC20Token {
      * @param _to Wallet address
      * @param _value Amount of tokens
      */
-    function issue(address _to, uint256 _value) external onlyOwner canIssue {
+    function issue(address _to, uint256 _value) public onlyOwner canIssue {
         require(withinMaxLimit(totalSupply, _value), "exceeds maximum supply");
         totalSupply = safeAdd(totalSupply, _value);
         balances[_to] = safeAdd(balances[_to], _value);

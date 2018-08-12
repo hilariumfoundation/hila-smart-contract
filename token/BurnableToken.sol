@@ -30,7 +30,7 @@ contract BurnableToken is Ownable, ERC20Token {
      * @param _from Wallet address
      * @param _value Amount of tokens to destroy
      */
-    function burn(address _from, uint256 _value) external onlyOwner canBurn {
+    function burn(address _from, uint256 _value) public onlyOwner canBurn {
         require(balances[_from] >= _value, "balance is smaller than the burning amount!");
 
         totalSupply = safeSub(totalSupply, _value);
