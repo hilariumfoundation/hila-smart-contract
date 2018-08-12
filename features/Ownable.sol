@@ -14,15 +14,21 @@ contract Ownable {
     /**
     * @dev The Ownable constructor sets the original `owner` of the contract.
     */
+    /*
     constructor(address _owner) public {
         owner = _owner == address(0) ? msg.sender : _owner;
+    }
+    */    
+
+    constructor() public {
+        owner = msg.sender;
     }
 
     /**
     * @dev Throws if called by any account other than the owner.
     */
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Not an owner of the contract");
         _;
     }
 
@@ -31,7 +37,7 @@ contract Ownable {
     * @param _newOwner The address to transfer ownership to.
     */
     function transferOwnership(address _newOwner) public onlyOwner {
-        require(_newOwner != owner);
+        require(_newOwner != owner, "already an owner!");
         newOwner = _newOwner;
     }
 
@@ -39,7 +45,7 @@ contract Ownable {
     * @dev confirm ownership by a new owner
     */
     function confirmOwnership() public {
-        require(msg.sender == newOwner);
+        require(msg.sender == newOwner, "you're not an new owner!");
         emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
         newOwner = 0x0;

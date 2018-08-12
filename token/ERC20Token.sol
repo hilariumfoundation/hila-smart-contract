@@ -13,8 +13,8 @@ contract ERC20Token is IERC20Token, SafeMath {
     mapping (address => mapping (address => uint256)) public allowed;
 
     function transfer(address _to, uint256 _value) public returns (bool) {
-        require(_to != address(0));
-        require(balances[msg.sender] >= _value);
+        require(_to != address(0), "invalid address!");
+        require(balances[msg.sender] >= _value, "account balance is not enough!");
 
         balances[msg.sender] = safeSub(balances[msg.sender], _value);
         balances[_to] = safeAdd(balances[_to], _value);
@@ -23,8 +23,8 @@ contract ERC20Token is IERC20Token, SafeMath {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-        require(_to != address(0));
-        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value);
+        require(_to != address(0), "invalid address!");
+        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value, "balance or allowed amount problem!");
 
         balances[_to] = safeAdd(balances[_to], _value);
         balances[_from] = safeSub(balances[_from], _value);
@@ -33,7 +33,7 @@ contract ERC20Token is IERC20Token, SafeMath {
         return true;
     }
 
-    function balanceOf(address _owner) public constant returns (uint256) {
+    function balanceOf(address _owner) public view returns (uint256) {
         return balances[_owner];
     }
 
@@ -43,7 +43,7 @@ contract ERC20Token is IERC20Token, SafeMath {
         return true;
     }
 
-    function allowance(address _owner, address _spender) public constant returns (uint256) {
+    function allowance(address _owner, address _spender) public view returns (uint256) {
         return allowed[_owner][_spender];
     }
 }
