@@ -35,35 +35,15 @@ contract Observable is Ownable {
         }
     }
 
+    function resetListener() public onlyOwner {
+
+        delete eventListener;
+    }
+
     function hasListener() internal view returns(bool) {
         
         return eventListener != address(0);
     }
-    
-    /*
-
-    function transfer(address _to, uint256 _value) public returns (bool) {
-        bool success = super.transfer(_to, _value);
-        if(hasListener() && success) {
-            eventListener.onTokenTransfer(msg.sender, _to, _value);
-        }
-        return success;
-    }
-
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-        bool success = super.transferFrom(_from, _to, _value);
-
-        //If has Listenser and transfer success
-        if(hasListener() && success) {
-            //Call event listener
-            eventListener.onTokenTransfer(_from, _to, _value);
-        }
-        return success;
-    }
-    
-    */
-
-
 
 
 }

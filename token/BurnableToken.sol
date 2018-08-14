@@ -10,9 +10,9 @@ import "../token/ERC20Token.sol";
  */
 contract BurnableToken is Ownable, ERC20Token {
 
-    bool public burningAllowed = true;                                       
-    event Burn(address indexed _to, uint256 _value);                         
+    bool public burningAllowed = true;
 
+    event Burn(address indexed _to, uint256 _value);                         
     event CanBurn();                                                   
     event CannotBurn();      
 

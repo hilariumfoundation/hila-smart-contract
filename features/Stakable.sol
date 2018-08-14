@@ -14,14 +14,16 @@ contract Stakable is Ownable {
         uint256 amount;        
     }
 
-    uint public stakeStartTime;
-    uint public stakeEndTime;
+    uint public stakedTime;
+    uint public unstakedTime;
+
+    bool public stakeRequested;
+    bool public unstakeRequested;
 
     mapping(address=>StakeInfo) stakes;
 
     event Staked();
     event Unstaked();
-
     event StakeUpdated(address account, uint256 staked);
 
     function updateStake(address account, uint256 balance) internal {
@@ -33,32 +35,62 @@ contract Stakable is Ownable {
         if ( stake.updated == 0 || balance < stake.amount ) {
             stake.updated = now;
             stake.amount = balance;
+            emit StakeUpdated(account, balance);
         }
     }
 
+    // stake start functions
+
     function stake() public onlyOwner {
-        require(!staking(), "already being staked!");
-        require(!stakeEnded(), "stake finished!");
-        stakeStartTime = now;
+        require(!staking(), "already staked!");
+        require(!unstaked(), "already unstaked!");
+        stakeRequested = true;
     }
 
-    //function confirmStake() public onlyOwner {}
+    function confirmStake() public onlyOwner {
+        require(stakeRequested, "stake was not requested!");
+        stakedTime = now;
+        emit Staked();
+    }
 
+    function cancelStake() public onlyOwner {
+        require(stakeRequested, "stake was not requested!");
+        stakeRequested = false;
+    }
+
+    // unstake functions
     function unstake() public onlyOwner {
         require(staking(), "not staking!");
-        stakeEndTime = now;
+        unstakeRequested = true;        
     }
 
+    function confirmUnstake() public onlyOwner {
+        require(unstakeRequested, "stake was not requested!");
+        unstakedTime = now;
+        emit Unstaked();
+    }
+
+    function cancelUnstake() public onlyOwner {
+        require(unstakeRequested, "stake was not requested!");
+        unstakeRequested = false;
+    }
+
+    // state check functions
+
     function stakeHasnotStarted() internal view returns (bool) {
-        return stakeStartTime == 0;
+        return stakedTime == 0;
     }
 
     function staking() public view returns (bool) {
-        return stakeStartTime != 0 && stakeEndTime == 0;
+        return stakedTime != 0 && unstakedTime == 0;
     }
 
-    function stakeEnded() public view returns (bool) {
-        return stakeEndTime != 0;
+    function unstaked() public view returns (bool) {
+        return unstakedTime != 0;
     }
 
+    function lastStakeUpdateTime(address account) public view returns (uint) {
+
+        return stakes[account].updated;
+    }
 }
