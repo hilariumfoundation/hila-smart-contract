@@ -11,6 +11,7 @@ import "../token/ERC20Token.sol";
 contract StakeTester is ERC20Token, Stakable {
 
     address acc1 = 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c;
+    address acc2 = 0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db;
 
     constructor() public {
 
@@ -70,8 +71,8 @@ contract StakeTester is ERC20Token, Stakable {
         balances[acc1] = 0;
 
         //reset stakes
-        stakeStartTime = 0;
-        stakeEndTime = 0;
+        stakedTime = 0;
+        unstakedTime = 0;
 
         stakes[owner].updated = 0;
         stakes[acc1].updated = 0;
@@ -81,35 +82,45 @@ contract StakeTester is ERC20Token, Stakable {
 
         resetTest();    
 
+        require(balanceOf(owner)==1000, "0.init. balance of owner != 1000");
+
         require(stakedAmount(owner)==0, "0.owner stake != 0");
         require(stakedAmount(acc1)==0, "0.acc1 stake != 0");
+        require(stakedAmount(acc2)==0, "0.acc2 stake != 0");
 
         transfer(acc1, 500);
         stake();
         require(stakedAmount(owner)==500, "1.owner stake != 500");
         require(stakedAmount(acc1)==500, "1.acc1 stake != 500");
+        require(stakedAmount(acc2)==0, "0.acc2 stake != 0");
 
         transfer(acc1, 100);
         require(stakedAmount(owner)==400, "2.owner stake != 400"); //400
         require(stakedAmount(acc1)==500, "2.acc1 stake != 500"); //600
+        require(stakedAmount(acc2)==0, "0.acc2 stake != 0");
 
         allowed[acc1][owner] = 300;
         transferFrom(acc1, owner, 300);
         require(stakedAmount(owner)==400, "3.owner stake != 400"); //700
         require(stakedAmount(acc1)==300, "3.acc1 stake != 300"); //300
+        require(stakedAmount(acc2)==0, "0.acc2 stake != 0");
 
         unstake();
-        require(stakeEnded(), "stake should have been ended");
+        require(unstaked(), "stake should have been ended");
         require(stakedAmount(owner)==400, "4.owner stake != 400"); //700
         require(stakedAmount(acc1)==300, "4.acc1 stake != 300"); //300
+        require(stakedAmount(acc2)==0, "0.acc2 stake != 0");
 
         transfer(acc1, 100);
         require(stakedAmount(owner)==400, "5.owner stake != 400"); //600
         require(stakedAmount(acc1)==300, "5.acc1 stake != 300"); //400
 
+        transfer(acc2, 300);
+        require(stakedAmount(owner)==400, "6.owner stake != 400"); //300
+        require(stakedAmount(acc2)==0, "6.acc1 stake != 0"); //300
+
+
         //require(stakedAmount(acc1)==500, uint2str(stakedAmount(acc1)));
-
-
     }
 
     function uint2str(uint i) internal pure returns (string){

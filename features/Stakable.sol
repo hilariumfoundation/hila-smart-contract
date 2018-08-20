@@ -28,14 +28,17 @@ contract Stakable is Ownable {
 
     function updateStake(address account, uint256 balance) internal {
 
-        if (!staking()) return;
+        if (stakeNotStarted())
+            return;
 
         StakeInfo storage stake = stakes[account];
 
-        if ( stake.updated == 0 || balance < stake.amount ) {
+        if ( stake.updated == 0 ||
+            ( staking() && balance < stake.amount ) ) {
+
             stake.updated = now;
             stake.amount = balance;
-            emit StakeUpdated(account, balance);
+            emit StakeUpdated(account, balance);            
         }
     }
 
@@ -78,6 +81,10 @@ contract Stakable is Ownable {
     // state check functions
 
     function stakeHasnotStarted() internal view returns (bool) {
+        return stakedTime == 0;
+    }
+
+    function stakeNotStarted() public view returns (bool) {
         return stakedTime == 0;
     }
 
