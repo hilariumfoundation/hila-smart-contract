@@ -4,6 +4,7 @@ import "./features/Pausable.sol";
 import "./features/Lockable.sol";
 import "./features/Stakable.sol";
 import "./features/Observable.sol";
+import "./features/Convertable2Eos.sol";
 
 import "./token/IssuableToken.sol";
 import "./token/BurnableToken.sol";
@@ -13,7 +14,7 @@ import "./token/BurnableToken.sol";
  * HILA Token Contract
  * @title HILA
  */
-contract HILA is Pausable, Lockable, IssuableToken, BurnableToken, Stakable, Observable {
+contract HILA is Pausable, Lockable, IssuableToken, BurnableToken, Stakable, Observable, Convertable2Eos {
 
     string public version;
     
@@ -28,7 +29,7 @@ contract HILA is Pausable, Lockable, IssuableToken, BurnableToken, Stakable, Obs
         maxSupply = 200 * (10 ** 8) * (10**4);
         //maxSupply = 100; // test purpose
         
-        version = "2.1";
+        version = "2.2";
     }
 
     function transfer(address _to, uint256 _value) public whenNotPaused whenNotLocked returns (bool) {
